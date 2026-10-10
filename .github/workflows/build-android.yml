@@ -1,0 +1,31 @@
+name: Build Flet APK
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build Flet APK
+        uses: flet-dev/flet-build-action@v1
+        with:
+          target: apk
+          project-path: '.'
+          
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: flet-android-app
+          path: build/apk/*.apk
