@@ -9,17 +9,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Обязательно скачиваем код репозитория
+      # Шаг 1: Скачиваем код вашего репозитория
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Запускаем сборку (экшен сам настроит Flutter и Java внутри)
-      - name: Build Flet APK
-        uses: flet-dev/flet-build-action@v1
+      # Шаг 2: Устанавливаем Python 3.11
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          target: apk
+          python-version: "3.11"
 
-      # Сохраняем готовый файл
+      # Шаг 3: Устанавливаем Java 17, необходимую для Android-сборщика
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # Шаг 4: Устанавливаем сам Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # Шаг 5: Устанавливаем Flet и запускаем сборку напрямую командами
+      - name: Install Flet and Build APK
+        run: |
+          pip install flet==1.0.0
+          flet build apk --yes
+
+      # Шаг 6: Сохраняем и выводим готовый файл
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
