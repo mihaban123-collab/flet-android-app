@@ -9,21 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Обязательно скачиваем код репозитория
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
+      # Запускаем сборку (экшен сам настроит Flutter и Java внутри)
       - name: Build Flet APK
         uses: flet-dev/flet-build-action@v1
         with:
           target: apk
-          project-path: '.'
-          
+
+      # Сохраняем готовый файл
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
