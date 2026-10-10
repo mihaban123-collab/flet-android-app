@@ -1,46 +1,46 @@
 name: Build Flet APK
 
 on:
-  workflow_dispatch: 
+  push:
+    branches: [ main, master ] # Сборка будет запускаться при пуше в эти ветки
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Позволяет запускать сборку вручную одной кнопкой
 
 jobs:
   build:
-    name: Build Android APK
+    name: Build APK Target
     runs-on: ubuntu-latest
 
     steps:
-      # Шаг 1: Скачиваем код вашего репозитория
-      - name: Checkout code
+      # Step 1: Клонируем ваш репозиторий в CI-окружение
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Шаг 2: Устанавливаем Python 3.11
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      # Шаг 3: Устанавливаем Java 17, необходимую для Android-сборщика
-      - name: Setup Java
+      # Step 2: Устанавливаем Java JDK (необходима для сборки под Android)
+      - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # Шаг 4: Устанавливаем сам Flutter
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      # Шаг 5: Устанавливаем Flet и запускаем сборку напрямую командами
-      - name: Install Flet and Build APK
+      # Step 3: Принудительно принимаем лицензии Android SDK
+      # Это решает проблему "[!] Some Android licenses not accepted" из вашего лога
+      - name: Accept Android Licenses
         run: |
-          pip install flet==1.0.0
-          flet build apk --yes
+          yes | source /usr/local/lib/android/sdk/tools/bin/sdkmanager --licenses || true
 
-      # Шаг 6: Сохраняем и выводим готовый файл
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      # Step 4: Используем официальный экшен для сборки Flet-приложений
+      # Он сам установит нужную версию Flutter, Python и соберет APK
+      - name: Build Flet Android App
+        uses: flet-dev/flet-build-action@v1
         with:
-          name: flet-android-app
+          target: apk
+
+      # Step 5: Сохраняем собранный APK в артефакты GitHub Actions
+      # После окончания сборки файл можно будет скачать прямо со страницы Actions
+      - name: Upload APK Artifact
+        uses: actions/artifacts@v4
+        with:
+          name: flet-app-release-apk
           path: build/apk/*.apk
