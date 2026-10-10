@@ -40,7 +40,7 @@ jobs:
       # Step 5: Сохраняем собранный APK в артефакты GitHub Actions
       # После окончания сборки файл можно будет скачать прямо со страницы Actions
       - name: Upload APK Artifact
-        uses: actions/artifacts@v4
+        uses: actions/upload-artifact@v4   # Исправлено на правильное название
         with:
           name: flet-app-release-apk
-          path: build/apk/*.apk
+          path: build/apk/
