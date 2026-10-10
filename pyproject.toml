@@ -1,9 +1,8 @@
 [project]
-name = "my-flet-app"
+name = "flet-android-app"
 version = "1.0.0"
 dependencies = [
     "flet==1.0.0"
 ]
 
 [tool.flet]
-# Сюда при необходимости можно добавлять настройки сборки
